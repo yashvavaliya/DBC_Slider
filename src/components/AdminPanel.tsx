@@ -748,7 +748,7 @@ export const AdminPanel: React.FC = () => {
             ) : (
               <AlertCircle className="w-5 h-5" />
             )}
-            {message.text}
+            {message.text}fhrthtrh
           </div>
         )}
 
