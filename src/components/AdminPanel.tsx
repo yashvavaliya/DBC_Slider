@@ -786,7 +786,7 @@ export const AdminPanel: React.FC = () => {
                           <span>Updated {new Date(card.updated_at).toLocaleDateString()}</span>
                           <div className="flex items-center gap-1">
                             <Eye className="w-4 h-4" />
-                            {card.view_count || 0} views
+                            {card.view_count || 0} rererg
                           </div>
                         </div>
 
