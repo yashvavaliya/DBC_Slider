@@ -48,6 +48,7 @@ import { CardPreview } from './CardPreview';
 import { MediaUpload } from './MediaUpload';
 import { ReviewsManager } from './ReviewsManager';
 import { AdminSidebar } from './AdminSidebar';
+import { AnalyticsPage } from './AnalyticsPage';
 import type { Database } from '../lib/supabase';
 import { generateSocialLink, SOCIAL_PLATFORMS, isPlatformAutoSyncable, generateAutoSyncedLinks } from '../utils/socialUtils';
 
@@ -382,6 +383,8 @@ export const AdminPanel: React.FC = () => {
       },
       is_published: false,
     });
+          {activeTab === 'analytics' && <AnalyticsPage />}
+          
     setSocialLinks([]);
     setMediaItems([]);
     setReviews([]);
