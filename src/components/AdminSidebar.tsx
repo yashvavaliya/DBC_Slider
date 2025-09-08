@@ -168,7 +168,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           {/* Create Card */}
           <button
             onClick={() => {
-              onCreateCard();
+              // Only switch to create tab, don't auto-create
               onTabChange('create');
               if (window.innerWidth < 1024) {
                 setIsMobileOpen(false);

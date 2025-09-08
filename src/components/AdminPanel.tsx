@@ -276,35 +276,38 @@ export const AdminPanel: React.FC = () => {
 
       if (error) throw error;
 
-      // Set the new card as current and switch to create tab
-      setCurrentCardId(data.id);
-      
-      // Update form data with new card defaults
+      // Reset form data to defaults for new card
       setFormData({
-        title: data.title || '',
-        username: data.slug || '',
+        title: '',
+        username: '',
         globalUsername: '',
-        company: data.company || '',
-        tagline: data.bio || '',
-        profession: data.position || '',
-        avatar_url: data.avatar_url || '',
-        phone: data.phone || '',
-        whatsapp: data.whatsapp || '',
-        email: data.email || user?.email || '',
-        website: data.website || '',
-        address: data.address || '',
-        map_link: data.map_link || '',
-        theme: (data.theme as any) || THEMES[0],
-        shape: data.shape || 'rectangle',
-        layout: (data.layout as any) || {
+        company: '',
+        tagline: '',
+        profession: '',
+        avatar_url: '',
+        phone: '',
+        whatsapp: '',
+        email: user?.email || '',
+        website: '',
+        address: '',
+        map_link: '',
+        theme: THEMES[0],
+        shape: 'rectangle',
+        layout: {
           style: 'modern',
           alignment: 'center',
           font: 'Inter'
         },
-        is_published: data.is_published || false
+        is_published: false
       });
       
-      // Reload cards and switch to create tab
+      // Clear social links and media for new card
+      setSocialLinks([]);
+      setMediaItems([]);
+      setReviews([]);
+      
+      // Set the new card as current and switch to create tab
+      setCurrentCardId(data.id);
       await loadUserData();
       setActiveTab('create');
     } catch (error) {
@@ -364,10 +367,8 @@ export const AdminPanel: React.FC = () => {
   const handleTabChange = (tab: 'cards' | 'create' | 'analytics') => {
     setActiveTab(tab);
     
-    // If switching to create tab without a current card, create one
-    if (tab === 'create' && !currentCardId && !saving) {
-      handleCreateCard();
-    }
+    // Don't auto-create cards when switching to create tab
+    // Users must explicitly click "Create New Card" button
   };
 
   const renderTabContent = () => {
@@ -459,9 +460,21 @@ export const AdminPanel: React.FC = () => {
               {/* Header */}
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-gray-900">
-                  {currentCardId ? 'Edit Card' : 'Create Card'}
+                  Create New Card
                 </h2>
                 <div className="flex gap-3">
+                  <button
+                    onClick={handleCreateCard}
+                    disabled={saving}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                  >
+                    {saving ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Plus className="w-4 h-4" />
+                    )}
+                    {saving ? 'Creating...' : 'Create New Card'}
+                  </button>
                   <button
                     onClick={handleSaveCard}
                     disabled={saving || !currentCardId}
@@ -472,12 +485,35 @@ export const AdminPanel: React.FC = () => {
                     ) : (
                       <Save className="w-4 h-4" />
                     )}
-                    {saving ? 'Creating...' : 'Create New Card'}
+                    {saving ? 'Saving...' : 'Save Card'}
                   </button>
                 </div>
               </div>
 
+              {/* Show message if no card is selected */}
+              {!currentCardId && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Plus className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">Ready to Create Your Card?</h3>
+                  <p className="text-blue-700 mb-4">Click "Create New Card" to start building your digital business card.</p>
+                  <button
+                    onClick={handleCreateCard}
+                    disabled={saving}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  >
+                    {saving ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Plus className="w-4 h-4" />
+                    )}
+                    {saving ? 'Creating...' : 'Create New Card'}
+                  </button>
+                </div>
+              )}
               {/* Basic Information */}
+              {currentCardId && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                   <User className="w-5 h-5 text-blue-600" />
@@ -538,8 +574,10 @@ export const AdminPanel: React.FC = () => {
                   </div>
                 </div>
               </div>
+              )}
 
               {/* Contact Information */}
+              {currentCardId && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                   <Mail className="w-5 h-5 text-green-600" />
@@ -613,8 +651,10 @@ export const AdminPanel: React.FC = () => {
                   </div>
                 </div>
               </div>
+              )}
 
               {/* Theme Selection */}
+              {currentCardId && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                   <Palette className="w-5 h-5 text-purple-600" />
@@ -647,8 +687,10 @@ export const AdminPanel: React.FC = () => {
                   ))}
                 </div>
               </div>
+              )}
 
               {/* Publish Settings */}
+              {currentCardId && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                   <Settings className="w-5 h-5 text-gray-600" />
@@ -671,17 +713,29 @@ export const AdminPanel: React.FC = () => {
                   </label>
                 </div>
               </div>
+              )}
             </div>
 
             {/* Preview Section */}
             <div className="lg:sticky lg:top-8">
-              {user && (
+              {user && currentCardId && (
                 <CardPreview
                   formData={formData}
                   socialLinks={socialLinks}
                   mediaItems={mediaItems}
                   reviews={reviews}
                 />
+              )}
+              {!currentCardId && (
+                <div className="bg-gray-100 rounded-xl shadow-sm border border-gray-200 p-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">Card Preview</h2>
+                  <div className="bg-white rounded-lg p-8 text-center">
+                    <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Plus className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500">Create a new card to see the preview</p>
+                  </div>
+                </div>
               )}
             </div>
           </div>
