@@ -655,8 +655,8 @@ export const AdminPanel: React.FC = () => {
             {/* Preview Section */}
             <div className="lg:sticky lg:top-8">
               {user && (
-                <CardPreview
-                  formData={formData}
+                  onEditCard={async (cardId) => {
+                    await loadCard(cardId);
                   socialLinks={socialLinks}
                   mediaItems={mediaItems}
                   reviews={reviews}
