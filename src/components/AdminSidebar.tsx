@@ -35,12 +35,16 @@ interface Analytics {
 interface AdminSidebarProps {
   onCreateCard: () => void;
   onEditCard: (cardId: string) => void;
+  onTabChange: (tab: 'cards' | 'create' | 'analytics') => void;
+  activeTab: 'cards' | 'create' | 'analytics';
   className?: string;
 }
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   onCreateCard,
   onEditCard,
+  onTabChange,
+  activeTab,
   className = ''
 }) => {
   const { user } = useAuth();
@@ -53,7 +57,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     totalCards: 0
   });
   const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState<'cards' | 'create' | 'analytics'>('cards');
 
   useEffect(() => {
     if (user) {
@@ -144,9 +147,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         <nav className="p-4 space-y-2">
           {/* My Cards Section */}
           <button
-            onClick={() => setActiveSection('cards')}
+            onClick={() => onTabChange('cards')}
             className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${
-              activeSection === 'cards'
+              activeTab === 'cards'
                 ? 'bg-blue-50 text-blue-700 border border-blue-200'
                 : 'hover:bg-gray-50 text-gray-700'
             }`}
@@ -165,12 +168,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           {/* Create Card */}
           <button
             onClick={() => {
-              setActiveSection('create');
+              onTabChange('create');
               onCreateCard();
               setIsMobileOpen(false);
             }}
             className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${
-              activeSection === 'create'
+              activeTab === 'create'
                 ? 'bg-green-50 text-green-700 border border-green-200'
                 : 'hover:bg-gray-50 text-gray-700'
             }`}
@@ -181,9 +184,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
           {/* Analytics */}
           <button
-            onClick={() => setActiveSection('analytics')}
+            onClick={() => onTabChange('analytics')}
             className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${
-              activeSection === 'analytics'
+              activeTab === 'analytics'
                 ? 'bg-purple-50 text-purple-700 border border-purple-200'
                 : 'hover:bg-gray-50 text-gray-700'
             }`}
@@ -196,7 +199,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         {/* Content Area */}
         {!isCollapsed && (
           <div className="p-4 border-t border-gray-200">
-            {activeSection === 'cards' && (
+            {activeTab === 'cards' && (
               <div className="space-y-4">
                 <h3 className="font-medium text-gray-900 mb-3">Recent Cards</h3>
                 {loading ? (
@@ -278,7 +281,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
               </div>
             )}
 
-            {activeSection === 'analytics' && (
+            {activeTab === 'analytics' && (
               <div className="space-y-4">
                 <h3 className="font-medium text-gray-900 mb-3">Analytics</h3>
                 <div className="space-y-3">
