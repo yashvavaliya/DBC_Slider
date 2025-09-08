@@ -168,7 +168,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           {/* Create Card */}
           <button
             onClick={() => {
-              onTabChange('create');
+              setActiveSection('create');
               onCreateCard();
               setIsMobileOpen(false);
             }}
