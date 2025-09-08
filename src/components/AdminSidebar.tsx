@@ -34,7 +34,7 @@ interface Analytics {
 
 interface AdminSidebarProps {
   onCreateCard: () => void;
-  onEditCard: (cardId: string) => Promise<void>;
+  onEditCard: (cardId: string) => void;
   onTabChange: (tab: 'cards' | 'create' | 'analytics') => void;
   activeTab: 'cards' | 'create' | 'analytics';
   className?: string;
@@ -168,9 +168,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           {/* Create Card */}
           <button
             onClick={() => {
-              onTabChange('create');
               onCreateCard();
-              setIsMobileOpen(false);
+              onTabChange('create');
+              if (window.innerWidth < 1024) {
+                setIsMobileOpen(false);
+              }
             }}
             className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${
               activeTab === 'create'
@@ -247,7 +249,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
                         <div className="flex gap-2">
                           <button
-                            onClick={() => onEditCard(card.id)}
+                            onClick={() => {
+                              onEditCard(card.id);
+                              if (window.innerWidth < 1024) {
+                                setIsMobileOpen(false);
+                              }
+                            }}
                             className="flex-1 flex items-center justify-center gap-1 px-2 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-colors"
                           >
                             <Edit3 className="w-3 h-3" />

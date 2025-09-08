@@ -276,9 +276,36 @@ export const AdminPanel: React.FC = () => {
 
       if (error) throw error;
 
-      // Reload cards and select the new one
-      await loadUserData();
+      // Set the new card as current and switch to create tab
       setCurrentCardId(data.id);
+      
+      // Update form data with new card defaults
+      setFormData({
+        title: data.title || '',
+        username: data.slug || '',
+        globalUsername: '',
+        company: data.company || '',
+        tagline: data.bio || '',
+        profession: data.position || '',
+        avatar_url: data.avatar_url || '',
+        phone: data.phone || '',
+        whatsapp: data.whatsapp || '',
+        email: data.email || user?.email || '',
+        website: data.website || '',
+        address: data.address || '',
+        map_link: data.map_link || '',
+        theme: (data.theme as any) || THEMES[0],
+        shape: data.shape || 'rectangle',
+        layout: (data.layout as any) || {
+          style: 'modern',
+          alignment: 'center',
+          font: 'Inter'
+        },
+        is_published: data.is_published || false
+      });
+      
+      // Reload cards and switch to create tab
+      await loadUserData();
       setActiveTab('create');
     } catch (error) {
       console.error('Error creating card:', error);
@@ -336,6 +363,11 @@ export const AdminPanel: React.FC = () => {
 
   const handleTabChange = (tab: 'cards' | 'create' | 'analytics') => {
     setActiveTab(tab);
+    
+    // If switching to create tab without a current card, create one
+    if (tab === 'create' && !currentCardId && !saving) {
+      handleCreateCard();
+    }
   };
 
   const renderTabContent = () => {
@@ -409,9 +441,10 @@ export const AdminPanel: React.FC = () => {
                 <p className="text-gray-600 mb-6">Create your first digital business card to get started.</p>
                 <button
                   onClick={handleCreateCard}
+                  disabled={saving}
                   className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  Create Your First Card
+                  {saving ? 'Creating...' : 'Create Your First Card'}
                 </button>
               </div>
             )}
@@ -439,7 +472,7 @@ export const AdminPanel: React.FC = () => {
                     ) : (
                       <Save className="w-4 h-4" />
                     )}
-                    Save Card
+                    {saving ? 'Creating...' : 'Create New Card'}
                   </button>
                 </div>
               </div>
@@ -678,8 +711,8 @@ export const AdminPanel: React.FC = () => {
       {/* Sidebar */}
       <AdminSidebar
         onCreateCard={handleCreateCard}
-        onEditCard={(cardId) => {
-          loadCard(cardId);
+        onEditCard={async (cardId) => {
+          await loadCard(cardId);
           setActiveTab('create');
         }}
         onTabChange={handleTabChange}
