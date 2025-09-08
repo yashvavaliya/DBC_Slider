@@ -254,6 +254,7 @@ export const AdminPanel: React.FC = () => {
 
     } catch (error) {
       console.error('Error loading card:', error);
+      alert('Failed to load card. Please try again.');
     }
   };
 
@@ -276,10 +277,21 @@ export const AdminPanel: React.FC = () => {
 
       if (error) throw error;
 
-      // Reload cards and select the new one
-      await loadUserData();
+      // Set the new card as current and switch to create tab
       setCurrentCardId(data.id);
       setActiveTab('create');
+      
+      // Update form data with new card
+      setFormData({
+        ...formData,
+        title: data.title || '',
+        username: data.slug || '',
+        email: data.email || user.email || '',
+        is_published: data.is_published || false
+      });
+      
+      // Reload cards to update the list
+      await loadUserData();
     } catch (error) {
       console.error('Error creating card:', error);
       alert('Failed to create card. Please try again.');

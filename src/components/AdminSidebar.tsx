@@ -34,7 +34,7 @@ interface Analytics {
 
 interface AdminSidebarProps {
   onCreateCard: () => void;
-  onEditCard: (cardId: string) => void;
+  onEditCard: (cardId: string) => Promise<void>;
   onTabChange: (tab: 'cards' | 'create' | 'analytics') => void;
   activeTab: 'cards' | 'create' | 'analytics';
   className?: string;
